@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1 id="essential-concepts">Essential Concepts</h1>
+<h2 id="what-is-a-context-">What is a Context?</h2>
+<p>At the core of the Contextual Scene Parser (CSP) lies contexts. Contexts serve as abstract descriptions of a certain
+    chunk of code to be parsed. This tells the parser what each chunk of code is supposed to represent, and the rules
+    associated with that context that the parser will follow when analyzing the code. Contexts are enclosed in
+    parentheses <em>()</em>. Views will <em>always</em> inherit contexts (unless explicitly identified by the ruleset).
+</p>
+<h2 id="what-is-a-carriage-">What is a Carriage?</h2>
+<p>A carriage tells the parser where the result from the code will return its value to. These are things like return
+    statements, or the end results of comparison contexts <em>(where in a comparison context, the carriage at the end of
+        the comparison will typically point back to the overarching view&#39;s carriage)</em>.
+    Carriages are enclosed in square brackets <em>[]</em>. Views by default always inherit the previous view index&#39;s
+    statement <em>(i.e. an <code>if</code> statement with view index (<em>0,1,0) will inherit the carriage type from
+        view index (</em>0,1))</em>. This behavior can be changed, however it&#39;s best to typically leave this alone
+    unless defining things like pointers in C++ and Rust, where the output of a view needs to circumvent the viewbinder
+    and interact with the binder directly. </p>
+<h2 id="what-is-a-view-index-">What is a View Index?</h2>
+<p>A view index is a marker within the viewbinder stating where in the code chronologically the given view lies. Every
+    view index is prefaced with an asterisk <em>(*)</em>, which represents the &quot;file view&quot; index. After that,
+    the first number represents each view that is at the top level of the file, and each subsequent number represents a
+    view within that top-level view. </p>
+<p>For example, an <code>if</code> statement within <code>fn main()</code> in a Rust program could have the view index
+    <em>(*0,1)</em>, and its corresponding <code>else</code> statement would have view index <em>(*0,2)</em>. If the
+    <code>if</code> statement had a nested <code>for</code> loop. the view index of that <code>for</code> loop would be
+    <em>(*0,1,0)</em>. View indices always start at 0 for their order and count up. </p>
+<p>The previous view index relative to the current will always be referred to as <code>&amp;</code>. </p>
+<h2 id="what-is-a-scene-">What is a &quot;Scene&quot;?</h2>
+<p>A scene is a synonym used to refer to a singular view, its viewbinder, and the general binder. </p>
+<h2 id="how-these-concepts-interact">How these concepts interact</h2>
+<p>These three tools do the heavy lifting of the parser&#39;s job. New languages are integrated with the parser by
+    building out JSON rulesets that use definitions of how a view is interpreted through its contexts, where the output
+    of each view goes through its carriages, and where the view lies depending on its view index.</p>
+<h2 id="language-agnosticism">Language Agnosticism</h2>
+<p>This approach was created as a way to get around complicated text dissection methods typically used by other parsing
+    techniques. Instead of reading text directly and giving a meaning to each interpreted word, the CSP breaks down code
+    based on the predefined descriptions of the code. This creates a more language agnostic means of parsing code, as
+    the parser isn&#39;t breaking apart multiple different languages in vastly different ways, it&#39;s instead creating
+    abstractions of the code based on user definitions and breaking them into views, the viewbinder, and the
+    binder. </p>
+<h1 id="views-the-viewbinder-and-the-binder">Views, the Viewbinder, and the Binder</h1>
+<h2 id="views">Views</h2>
+<p>Views are typically associated with rvalues and code blocks. A view can be thought of as a <em>&quot;window into an
+    action&quot;</em>. A view can be something as simple as an assignment operation, or as complex as it needs to be
+    thereafter. Let&#39;s remove the binder from a view to see what&#39;s going on.</p>
+<p><sub>Figure 1</sub></p>
+<div style="flex: 1 0 auto;display: flex;flex-direction: column;border-left: 3px solid;border-bottom: 1px dashed;padding: 8px 8px;">
+    <br/>
+    <p style="margin: auto;">[viewbinder] (condition)</p>
+    <div id="conditional"
+         style="flex: 1 0 auto;display:flex;justify-content: space-around">
+        <div style="flex: 0 1 auto;display: flex;flex-direction: column">
+            <p style="margin: auto">[condition] (comparison) i &lt; 0</p>
+            <p style="margin: auto">↓</p>
+            <p style="margin: auto;border-bottom: 1px dashed">(return) true</p>
+        </div>
+        <div style="flex: 0 1 auto;display: flex;flex-direction: column">
+            <p style="margin: auto">[condition] (mirror) i &gt;= 0</p>
+            <p style="margin: auto">↓</p>
+            <p style="margin: auto;border-bottom: 1px dashed">(return) false</p>
+        </div>
+    </div>
+</div>
+
+<p>This contains a <em>&quot;window&quot;</em> into a comparison operation and shows what value the
+    view is going to send back to the viewbinder. </p>
+<p>This view is defined by default as having a mirror comparison that&#39;s generated by the parser automatically. The
+    mirror uses an inverse operation of the main branch of the code. This is an example of an efficient parser rule, as
+    the parser will be able to ultra-optimize code and detect errors easier. Now, instead, consider the following
+    view:</p>
+<p><sub>Figure 2</sub></p>
+<div style="flex: 1 0 auto;display: flex;flex-direction: column;border-left: 3px solid;border-bottom: 1px dashed;padding: 8px 8px;">
+    <br/>
+    <p style="margin: auto;">[viewbinder] (condition)</p>
+    <div id="conditional"
+         style="flex: 1 0 auto;display:flex;justify-content: space-around">
+        <div style="flex: 0 1 auto;display: flex;flex-direction: column">
+            <p style="margin: auto">[condition] (comparison) i &lt; 0</p>
+            <p style="margin: auto">↓</p>
+            <p style="margin: auto;border-bottom: 1px dashed">(return) i</p>
+        </div>
+    </div>
+</div>
+
+<p>The <code>(mirror)</code> context was removed as a requirement for <code>(condition)</code> contexts. Now the parser
+    can&#39;t tell what the opposite result of the underlying code is. This won&#39;t generate any errors, and in this
+    case it doesn&#39;t cause any problems with optimizations that can be made by the user, but in situations where each
+    of the <code>(comparison)</code> views in Figure 1 branched off into multiple complex views, the parser would be
+    able to suggest incredibly efficient optimizations to the receiving end of the parser by searching through each
+    child view&#39;s contexts, carriages, results, and contained information.</p>
+<h2 id="viewbinder">Viewbinder</h2>
+<p>On the left side of the figures above, notice the thicker solid line. This is the viewbinder. The viewbinder is
+    responsible for moving output from a view back into the binder. </p>
+<h1 id="rulesets">Rulesets</h1>
+<p>Rulesets are written in JSON format. </p>
+
+</body>
+</html>
