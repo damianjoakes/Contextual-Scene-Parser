@@ -11,6 +11,9 @@
             <h1 id="toc-header">Table of Contents</h1>
             <ul>
                 <li>
+                    <a class="toc-section" href="#foreword">Foreword</a>
+                </li>
+                <li>
                     <a class="toc-section" href="#essential-concepts">Essential Concepts</a>
                     <ul>
                         <li><a class="toc-section" href="#what-is-a-context-">What is a Context?</a></li>
@@ -35,6 +38,9 @@
                 </li>
             </ul>
         </div>
+        <h1 id="foreword">Foreword</h1>
+        <p>Please note that this documentation is undergoing construction, with many concepts changing as the project
+        shapes into its final concepts.</p>
         <h1 id="essential-concepts">Essential Concepts</h1>
         <h2 id="what-is-a-context-">What is a Context?</h2>
         <p>At the core of the Contextual Scene Parser (CSP) lies contexts. Contexts serve as abstract descriptions of a
@@ -56,13 +62,10 @@
             index&#39;s
             statement <em>(i.e. an <code>if</code> statement with view index (<em>0,1,0) will inherit the carriage type
                 from
-                view index (</em>0,1))</em>. This behavior can be changed, however it&#39;s best to typically leave this
-            alone
-            unless defining things like pointers in C++ and Rust, where the output of a view needs to circumvent the
-            viewbinder
-            and interact with the binder directly. </p>
+                view index (</em>&))</em>, however, this behavior can be changed, and often is in the cases of
+            statements such as loops, conditions, and arithmetic.</p>
         <h2 id="what-is-a-view-index-">What is a View Index?</h2>
-        <p>A view index is a marker within the viewbinder stating where in the code chronologically the given view lies.
+        <p>A view index is a marker at the top of each viewbinder stating where in the code chronologically the given view lies.
             Every
             view index is prefaced with an asterisk <em>(*)</em>, which represents the &quot;file view&quot; index.
             After that,
@@ -78,7 +81,8 @@
             <em>(*0,1,0)</em>. View indices always start at 0 for their order and count up. </p>
         <p>The previous view index relative to the current will always be referred to as <code>&amp;</code>. </p>
         <h2 id="what-is-a-scene-">What is a &quot;Scene&quot;?</h2>
-        <p>A scene is a synonym used to refer to a singular view, its viewbinder, and the general binder. </p>
+        <p>A scene is a synonym used to refer to a singular view, its viewbinder, and the general binder. It encapsulates
+            the whole scope of any given statement.</p>
         <h2 id="what-is-an-identifier-">What is an identifier?</h2>
         <p>An identifier refers to the word after the carriage and context. A context will always take its identifier
         as input.</p>
@@ -166,6 +170,12 @@
         <h2 id="viewbinder">Viewbinder</h2>
         <p>On the left side of the figures above, notice the thicker solid line. This is the viewbinder. The viewbinder
         doesn't do much besides giving a representation of when things go into/out of scope. </p>
+        <h2 id="binder">Binder</h2>
+        <p>The binder is associated with lvalues, keywords, and identifiers. Think of the binder as exactly that- a
+            binder that stores all sorts of pages of information, all organized and sectioned off. All identifiers
+        stored in the binder in view index "&" are accessible to the current view.</p>
+        <p>Each [binder] carriaged view will output its processing result to the binder, where that identifier
+        is now accessible at the current view index.</p>
         <h2 id="a-larger-example">A larger example</h2>
         <p>Below is a by-hand interpretation of some code into this view/viewbinder/binder format:</p>
         <sub>Figure 3</sub>
@@ -367,6 +377,6 @@
 
         </ul>
         <h1 id="rulesets">Rulesets</h1>
-        <p>Rulesets are written in JSON format. </p>
+        <p>This section is undergoing construction.</p>
     </body>
 </html>
