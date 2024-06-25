@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+:root {
+    --text-color: black;
+    --background-color: white;
+    --block-section-dark: #0000011;
+    --block-section-light: #00000006;
+    --border-color: #00000024;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-color: white;
+        --background-color: #121112;
+        --block-section-dark: #ffffff11;
+        --block-section-light: #ffffff06;
+        --border-color: white;
+    }
+}
+
+body {
+    line-height: 1.5em;
+    background: var(--background-color);
+    color: var(--text-color);
+    font-family: Inter, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+pre {
+    background: var(--block-section-dark);
+    padding: 1em 1em;
+    font-size: 14px;
+}
+
+code {
+    font-size: 14px;
+}
+
+.view {
+    background: var(--block-section-light);
+    border-left: 2px solid var(--border-color);
+    border-bottom: 1px dashed var(--border-color);
+    border-top: 1px dotted var(--border-color);
+    padding: 1em 1em;
+    flex: auto;
+    flex-grow: 4;
+    font-family: monospace;
+    flex-direction: column;
+    display: flex;
+    justify-content: space-around;
+}
+
+.binder {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+#page-title {
+    font-size: 3em;
+    text-decoration: underline;
+}
+
+#toc-header {
+    text-decoration: underline;
+}
+
+.toc-section {
+    font-size: 15px;
+    color: var(--text-color);
+    text-decoration: var(--border-color) dotted underline 1px;
+}
+
+.toc-section:hover {
+    color: seagreen;
+    text-decoration-color: seagreen;
+    /*transition: color 0.5s;*/
+    transition: all 250ms ease-out 0s;
+}
+/*#iostream-import::before {*/
+/*    content: "0";*/
+/*}*/
